@@ -33,11 +33,11 @@ export default function App() {
               <Route path="/profile" element={<MyProfile />} /> */}
 
               {/* Dealership Inventory */}
-              {/* <Route path="/inventory" element={<InventoryDashboard />} />
+              <Route path="/inventory" element={<InventoryDashboard />} />
               <Route path="/inventory/add" element={<AddVehicle />} />
               <Route path="/inventory/:vin" element={<VehicleDetails />} />
               <Route path="/inventory/:vin/edit" element={<EditVehicle />} />
-              <Route path="/inventory/:vin/gallery" element={<VehicleGallery />} /> */}
+              <Route path="/inventory/:vin/gallery" element={<VehicleGallery />} />
 
               {/* Customers & Deals */}
               {/* <Route path="/customers" element={<CustomersDashboard />} />

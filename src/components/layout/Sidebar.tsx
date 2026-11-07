@@ -49,8 +49,8 @@ export default function Sidebar() {
   const [activeItem, setActiveItem] = useState('overview');
 
   return (
-    // Added flex-shrink-0, sticky, and top-4 to lock it in place
-    <aside className="w-[280px] flex-shrink-0 sticky top-4 h-[calc(100vh-2rem)] my-4 ml-4 bg-white rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col overflow-hidden">
+    // 'fixed left-4 top-4 z-40' kiyana classes add kara. 'sticky' saha 'my-4 ml-4' wenuwata meka dammama page eka scroll weddi meka hellenne na.
+    <aside className="fixed left-4 top-4 z-40 w-[280px] h-[calc(100vh-2rem)] bg-white rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col overflow-hidden">
       
       {/* 1. Logo Area */}
       <div className="p-8 pb-6 border-b border-neutral-100 flex items-center gap-3">
