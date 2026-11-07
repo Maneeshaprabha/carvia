@@ -45,3 +45,29 @@ a {
   background: #fecaca;
   color: #991b1b;
 }
+
+
+
+/* Sidebar Scrollbar */
+
+.custom-sidebar-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d4 transparent;
+}
+
+.custom-sidebar-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-sidebar-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-sidebar-scrollbar::-webkit-scrollbar-thumb {
+  background: #d4d4d4;
+  border-radius: 20px;
+}
+
+.custom-sidebar-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #a3a3a3;
+}
