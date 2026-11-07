@@ -1,6 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, 
   Car, 
@@ -17,39 +19,40 @@ import {
   ShieldCheck
 } from 'lucide-react';
 
+// Added 'href' to each item so it knows where to navigate
 const menuGroups = [
   {
     title: 'Main Menu',
     items: [
-      { id: 'overview', label: 'Overview', icon: <LayoutDashboard size={20} /> },
-      { id: 'inventory', label: 'Inventory', icon: <Car size={20} /> },
-      { id: 'sales', label: 'Sales & Deals', icon: <FileText size={20} /> },
-      { id: 'finance', label: 'Finance', icon: <Wallet size={20} /> },
+      { id: 'overview', label: 'Overview', href: '/overview', icon: <LayoutDashboard size={20} /> },
+      { id: 'inventory', label: 'Inventory', href: '/inventory', icon: <Car size={20} /> },
+      { id: 'sales', label: 'Sales & Deals', href: '/deals', icon: <FileText size={20} /> },
+      { id: 'finance', label: 'Finance', href: '/finance', icon: <Wallet size={20} /> },
     ]
   },
   {
     title: 'Management',
     items: [
-      { id: 'customers', label: 'Customers', icon: <Users size={20} /> },
-      { id: 'service', label: 'Service Center', icon: <Wrench size={20} /> },
-      { id: 'fleet', label: 'Company Fleet', icon: <Building2 size={20} /> },
-      { id: 'invoices', label: 'Invoices', icon: <Receipt size={20} /> },
-      { id: 'reports', label: 'Reports', icon: <PieChart size={20} /> },
+      { id: 'customers', label: 'Customers', href: '/customers', icon: <Users size={20} /> },
+      { id: 'service', label: 'Service Center', href: '/service', icon: <Wrench size={20} /> },
+      { id: 'fleet', label: 'Company Fleet', href: '/fleet', icon: <Building2 size={20} /> },
+      { id: 'invoices', label: 'Invoices', href: '/invoices', icon: <Receipt size={20} /> },
+      { id: 'reports', label: 'Reports', href: '/reports', icon: <PieChart size={20} /> },
     ]
   },
   {
     title: 'Administration',
     items: [
-      { id: 'staff', label: 'Staff & Access', icon: <ShieldCheck size={20} /> },
+      { id: 'staff', label: 'Staff & Access', href: '/staff', icon: <ShieldCheck size={20} /> },
     ]
   }
 ];
 
 export default function Sidebar() {
-  const [activeItem, setActiveItem] = useState('overview');
+  // usePathname gets the current URL so we know which button to highlight
+  const pathname = usePathname();
 
   return (
-    // 'fixed left-4 top-4 z-40' kiyana classes add kara. 'sticky' saha 'my-4 ml-4' wenuwata meka dammama page eka scroll weddi meka hellenne na.
     <aside className="fixed left-4 top-4 z-40 w-[280px] h-[calc(100vh-2rem)] bg-white rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col overflow-hidden">
       
       {/* 1. Logo Area */}
@@ -71,33 +74,45 @@ export default function Sidebar() {
               {group.title}
             </p>
             
-            {group.items.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => setActiveItem(item.id)}
-                className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-medium transition-all ${
-                  activeItem === item.id 
-                    ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' 
-                    : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  {item.icon}
-                  <span className="text-sm">{item.label}</span>
-                </div>
-                {activeItem === item.id && <ChevronRight size={16} className="text-red-200" />}
-              </button>
-            ))}
+            {group.items.map((item) => {
+              // Check if the current URL matches this link's href
+              const isActive = pathname === item.href || (item.href !== '/overview' && pathname.startsWith(item.href));
+
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-medium transition-all ${
+                    isActive 
+                      ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' 
+                      : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    {/* Icon turns white when active */}
+                    <div className={isActive ? "text-white" : "text-neutral-500"}>
+                      {item.icon}
+                    </div>
+                    {/* Text turns white when active */}
+                    <span className={`text-sm ${isActive ? "text-white" : "text-neutral-500"}`}>
+                      {item.label}
+                    </span>
+                  </div>
+                  {/* Chevron arrow turns white when active */}
+                  {isActive && <ChevronRight size={16} className="text-white" />}
+                </Link>
+              );
+            })}
           </div>
         ))}
       </div>
 
       {/* 3. Bottom Actions */}
       <div className="p-4 border-t border-neutral-100 flex flex-col gap-2">
-        <button className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 transition-colors">
+        <Link href="/settings" className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 transition-colors">
           <Settings size={20} />
           <span className="text-sm">Settings</span>
-        </button>
+        </Link>
         
         {/* User Profile / Logout Snippet */}
         <div className="mt-2 p-3 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center justify-between">
@@ -112,9 +127,9 @@ export default function Sidebar() {
               <p className="text-[10px] text-neutral-500 font-medium mt-1">General Manager</p>
             </div>
           </div>
-          <button className="w-8 h-8 flex items-center justify-center rounded-xl text-neutral-400 hover:bg-white hover:text-red-600 hover:shadow-sm transition-all">
+          <Link href="/login" className="w-8 h-8 flex items-center justify-center rounded-xl text-neutral-400 hover:bg-white hover:text-red-600 hover:shadow-sm transition-all">
             <LogOut size={16} />
-          </button>
+          </Link>
         </div>
       </div>
 
