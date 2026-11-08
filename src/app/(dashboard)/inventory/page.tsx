@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Link from 'next/link'; // <--- Next.js Link එක import කළා
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Search, 
@@ -11,7 +12,8 @@ import {
   MoreHorizontal, 
   X,
   Phone,
-  FileText
+  FileText,
+  Plus // <--- Plus icon එක import කළා
 } from 'lucide-react';
 
 const inventoryData = [
@@ -79,11 +81,15 @@ export default function InventoryPage() {
       {/* LEFT PANEL: Master List (Grid) */}
       <div className="flex-1 flex flex-col bg-white rounded-[2rem] border border-[#e5e7eb] shadow-sm overflow-hidden">
         
-        {/* Header & Search */}
+        {/* Header, Search & Add Vehicle Button */}
         <div className="p-6 pb-4 border-b border-[#f3f4f6] flex items-center justify-between gap-4 bg-white z-10">
-          <h1 className="text-2xl font-extrabold text-[#111827] tracking-tight">Inventory</h1>
+          <div>
+            <h1 className="text-2xl font-extrabold text-[#111827] tracking-tight">Inventory</h1>
+            <p className="text-xs text-neutral-500 font-medium mt-0.5">Manage dealership stock and vehicles</p>
+          </div>
+
           <div className="flex items-center gap-3">
-            <div className="relative w-64">
+            <div className="relative w-56">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#9ca3af]" />
               <input 
                 type="text" 
@@ -91,9 +97,18 @@ export default function InventoryPage() {
                 className="w-full pl-9 pr-4 py-2.5 bg-[#f9fafb] border border-[#e5e7eb] rounded-xl text-sm focus:outline-none focus:border-[#e60000] transition-all text-[#111827]"
               />
             </div>
+            
             <button className="p-2.5 border border-[#e5e7eb] rounded-xl text-[#6b7280] hover:bg-[#f9fafb] transition-colors">
               <Filter size={18} />
             </button>
+
+            {/* ADD VEHICLE BUTTON */}
+            <Link 
+              href="/inventory/add" 
+              className="flex items-center gap-2 bg-[#e60000] text-white px-4 py-2.5 rounded-xl font-bold hover:bg-red-700 transition-colors shadow-md shadow-red-600/20 text-sm whitespace-nowrap"
+            >
+              <Plus size={18} /> Add Vehicle
+            </Link>
           </div>
         </div>
 
@@ -126,8 +141,8 @@ export default function InventoryPage() {
                 onClick={() => setSelectedVehicle(vehicle)}
                 className={`p-5 rounded-[1.25rem] border-[1.5px] transition-all cursor-pointer bg-white flex flex-col justify-between h-[180px] ${
                   selectedVehicle.id === vehicle.id 
-                    ? 'border-[#111827] shadow-md ring-4 ring-gray-900/5' 
-                    : 'border-[#f3f4f6] hover:border-[#d1d5db] shadow-sm'
+                    ? 'border-[#e60000] shadow-md ring-4 ring-red-600/10' 
+                    : 'border-[#f3f4f6] hover:border-[#e60000]/40 shadow-sm'
                 }`}
               >
                 {/* Card Top: ID & Status */}
@@ -151,7 +166,7 @@ export default function InventoryPage() {
                       {formatCurrency(vehicle.price)}
                     </p>
                   </div>
-                  {/* Real Car Image matching the reference layout */}
+                  {/* Real Car Image */}
                   <div className="w-32 h-20 bg-[#f9fafb] rounded-xl border border-[#f3f4f6] overflow-hidden relative shadow-inner">
                      <img src={vehicle.image} alt={vehicle.model} className="w-full h-full object-cover" />
                   </div>
@@ -204,7 +219,7 @@ export default function InventoryPage() {
                </div>
             </div>
 
-            {/* Main Image Area with Real Photo */}
+            {/* Main Image Area */}
             <div className="w-full h-52 bg-[#f9fafb] rounded-2xl border border-[#e5e7eb] overflow-hidden relative shadow-sm">
                <img src={selectedVehicle.image} alt={selectedVehicle.model} className="w-full h-full object-cover" />
                <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur px-3 py-1.5 rounded-lg text-xs font-bold text-[#111827] border border-[#e5e7eb] shadow-sm">
