@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
@@ -13,13 +13,13 @@ import {
   Settings, 
   LogOut,
   ChevronRight,
+  ChevronLeft,
   Wallet,
   Building2,
   Receipt,
   ShieldCheck
 } from 'lucide-react';
 
-// Added 'href' to each item so it knows where to navigate
 const menuGroups = [
   {
     title: 'Main Menu',
@@ -49,57 +49,81 @@ const menuGroups = [
 ];
 
 export default function Sidebar() {
-  // usePathname gets the current URL so we know which button to highlight
   const pathname = usePathname();
+  const [isMinimized, setIsMinimized] = useState(false);
 
   return (
-    <aside className="fixed left-4 top-4 z-40 w-[280px] h-[calc(100vh-2rem)] bg-white rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col overflow-hidden">
+    <aside 
+      className={`fixed left-4 top-4 z-40 h-[calc(100vh-2rem)] bg-white rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col overflow-hidden transition-all duration-200 ${
+        isMinimized ? 'w-[88px]' : 'w-[280px]'
+      }`}
+    >
       
-      {/* 1. Logo Area */}
-      <div className="p-8 pb-6 border-b border-neutral-100 flex items-center gap-3">
-        <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-red-600/20">
-          C
+      {/* 1. Logo Area & Toggle Button */}
+      <div className="p-6 pb-6 border-b border-neutral-100 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 overflow-hidden">
+          <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-red-600/20 shrink-0">
+            C
+          </div>
+          
+          {/* Minimize නොකළ විට නම පෙන්වයි */}
+          {!isMinimized && (
+            <div className="block">
+              <h1 className="text-xl font-bold leading-tight text-neutral-900 tracking-tight">Carvia</h1>
+              <p className="text-[10px] text-neutral-500 font-bold tracking-widest uppercase mt-0.5">Dealership</p>
+            </div>
+          )}
         </div>
-        <div>
-          <h1 className="text-xl font-bold leading-tight text-neutral-900 tracking-tight">Carvia</h1>
-          <p className="text-[10px] text-neutral-500 font-bold tracking-widest uppercase mt-0.5">Dealership</p>
-        </div>
+
+        {/* Toggle Button */}
+        <button 
+          type="button"
+          onClick={() => setIsMinimized(!isMinimized)}
+          className="w-7 h-7 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-600 flex items-center justify-center transition-colors cursor-pointer shrink-0"
+          title={isMinimized ? "Expand Sidebar" : "Minimize Sidebar"}
+        >
+          {isMinimized ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
+        </button>
       </div>
 
       {/* 2. Main Navigation */}
-      <div className="flex-1 px-4 py-6 overflow-y-auto custom-scrollbar flex flex-col gap-6">
+      <div className="flex-1 px-3 py-6 overflow-y-auto custom-scrollbar flex flex-col gap-6">
         {menuGroups.map((group, index) => (
-          <div key={index} className="flex flex-col gap-2">
-            <p className="px-4 text-xs font-bold text-neutral-400 uppercase tracking-wider mb-1">
-              {group.title}
-            </p>
+          <div key={index} className="flex flex-col gap-1.5">
+            {!isMinimized && (
+              <p className="px-3 text-[10px] font-bold text-neutral-400 uppercase tracking-wider mb-1">
+                {group.title}
+              </p>
+            )}
             
             {group.items.map((item) => {
-              // Check if the current URL matches this link's href
               const isActive = pathname === item.href || (item.href !== '/overview' && pathname.startsWith(item.href));
 
               return (
                 <Link
                   key={item.id}
                   href={item.href}
-                  className={`w-full flex items-center justify-between px-4 py-3.5 rounded-2xl font-medium transition-all ${
+                  title={isMinimized ? item.label : ""}
+                  className={`w-full flex items-center justify-between px-3.5 py-3.5 rounded-2xl font-medium transition-all ${
                     isActive 
                       ? 'bg-red-600 text-white shadow-lg shadow-red-600/20' 
                       : 'text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    {/* Icon turns white when active */}
-                    <div className={isActive ? "text-white" : "text-neutral-500"}>
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className={isActive ? "text-white shrink-0" : "text-neutral-500 shrink-0"}>
                       {item.icon}
                     </div>
-                    {/* Text turns white when active */}
-                    <span className={`text-sm ${isActive ? "text-white" : "text-neutral-500"}`}>
-                      {item.label}
-                    </span>
+                    
+                    {/* Minimize නොකළ විට label එක පෙන්වයි */}
+                    {!isMinimized && (
+                      <span className={`text-sm font-bold ${isActive ? "text-white" : "text-neutral-600"}`}>
+                        {item.label}
+                      </span>
+                    )}
                   </div>
-                  {/* Chevron arrow turns white when active */}
-                  {isActive && <ChevronRight size={16} className="text-white" />}
+
+                  {!isMinimized && isActive && <ChevronRight size={16} className="text-white shrink-0" />}
                 </Link>
               );
             })}
@@ -108,28 +132,37 @@ export default function Sidebar() {
       </div>
 
       {/* 3. Bottom Actions */}
-      <div className="p-4 border-t border-neutral-100 flex flex-col gap-2">
-        <Link href="/settings" className="w-full flex items-center gap-3 px-4 py-3.5 rounded-2xl font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 transition-colors">
-          <Settings size={20} />
-          <span className="text-sm">Settings</span>
+      <div className="p-3 border-t border-neutral-100 flex flex-col gap-2">
+        <Link 
+          href="/settings" 
+          title={isMinimized ? "Settings" : ""}
+          className="w-full flex items-center gap-3 px-3.5 py-3.5 rounded-2xl font-medium text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 transition-colors"
+        >
+          <div className="shrink-0 text-neutral-500"><Settings size={20} /></div>
+          {!isMinimized && <span className="text-sm font-bold text-neutral-600">Settings</span>}
         </Link>
         
-        {/* User Profile / Logout Snippet */}
-        <div className="mt-2 p-3 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        {/* User Profile / Logout */}
+        <div className={`mt-1 p-2.5 bg-neutral-50 rounded-2xl border border-neutral-100 flex items-center ${isMinimized ? 'justify-center' : 'justify-between'}`}>
+          <div className="flex items-center gap-3 overflow-hidden">
             <img 
               src="https://i.pravatar.cc/150?img=33" 
               alt="Admin" 
-              className="w-9 h-9 rounded-full border border-neutral-200"
+              className="w-9 h-9 rounded-full border border-neutral-200 shrink-0 object-cover"
             />
-            <div className="text-left">
-              <p className="text-sm font-bold text-neutral-900 leading-none">Alex Mercer</p>
-              <p className="text-[10px] text-neutral-500 font-medium mt-1">General Manager</p>
-            </div>
+            {!isMinimized && (
+              <div className="text-left truncate">
+                <p className="text-xs font-bold text-neutral-900 leading-none truncate">Alex Mercer</p>
+                <p className="text-[10px] text-neutral-500 font-medium mt-1 truncate">General Manager</p>
+              </div>
+            )}
           </div>
-          <Link href="/login" className="w-8 h-8 flex items-center justify-center rounded-xl text-neutral-400 hover:bg-white hover:text-red-600 hover:shadow-sm transition-all">
-            <LogOut size={16} />
-          </Link>
+          
+          {!isMinimized && (
+            <Link href="/login" className="w-8 h-8 flex items-center justify-center rounded-xl text-neutral-400 hover:bg-white hover:text-red-600 hover:shadow-xs transition-all shrink-0">
+              <LogOut size={16} />
+            </Link>
+          )}
         </div>
       </div>
 
